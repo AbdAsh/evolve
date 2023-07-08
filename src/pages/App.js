@@ -1,9 +1,11 @@
-import logo from './logo.svg';
+import logo from '../assets/logo.svg';
 import './App.css';
+import DefaultLayout from '../layouts/default';
 
 function App() {
   return (
     <div className="App">
+      <DefaultLayout />
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
