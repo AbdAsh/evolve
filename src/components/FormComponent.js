@@ -2,6 +2,7 @@ import { TextField, Box } from '@mui/material';
 import './FormComponent.scss';
 import UploadComponent from './UploadComponent';
 import Dropdown from './DropdownComponent';
+import List from './ListComponent';
 function Form(props) {
   // const { inputs } = props
   const CustomInput = (props) => {
@@ -55,7 +56,7 @@ function Form(props) {
         <div className="col-12 input-container">
           <span className="input-label"> Speakers </span>
           <Dropdown options={['lol', 'lmao', 'ye']} />
-          
+          <List items={[{ title: 'lol', subtitle: 'lmao' }, { title: 'lol', subtitle: 'lmao' }]} />
         </div>
       </Box>
     </div>

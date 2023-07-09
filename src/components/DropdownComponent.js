@@ -59,7 +59,7 @@ function Dropdown({ options, initialValue, onChange }) {
   };
 
   return (
-    <div className="input-container dropdown" ref={dropdownRef}>
+    <div className="input-container dropdown mb-0" ref={dropdownRef}>
       <div
         className="position-relative dropdown-field"
         onClick={toggleDropdown}
