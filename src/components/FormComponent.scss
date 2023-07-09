@@ -1,0 +1,73 @@
+$custom-grey: #bababa;
+.form-container {
+  margin: 5% 20%;
+  background-color: #2e2e2e;
+  .form {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    flex-grow: 1;
+  }
+}
+.multi-inputs-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 80%;
+}
+.input-container {
+  margin-bottom: 20px;
+  .input-label {
+    display: block;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 500;
+    color: #bababa;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 150%;
+    .asterisk {
+      color: red;
+    }
+  }
+  .input-field {
+    font-size: 14px;
+    font-weight: 500;
+    input, textarea {
+      color: #ffffff;
+    }
+    fieldset {
+      border-radius: 0px;
+      border-color: $custom-grey;
+    }
+    &:hover {
+      fieldset {
+        border-width: 2px;
+        border-color: $custom-grey;
+      }
+    }
+    .Mui-focused {
+      fieldset {
+        border-color: $custom-grey;
+      }
+    }
+    &.textarea {
+      div {
+        textarea {
+          min-height: 80px;
+        }
+      }
+    }
+  }
+}
+
+.line {
+  width: 100%;
+  height: 1px;
+  background-color: #484848;
+  margin: 20px 0;
+}
