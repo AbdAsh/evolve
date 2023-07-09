@@ -9,6 +9,7 @@ function Dropdown({ options, initialValue, onChange }) {
   const [selectedOption, setSelectedOption] = useState(initialValue);
   const [offset, setOffset] = useState(0);
   const [limit, setLimit] = useState(10);
+  const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -24,7 +25,7 @@ function Dropdown({ options, initialValue, onChange }) {
     dropdown.addEventListener('scroll', handleScroll);
     return () => dropdown.removeEventListener('scroll', handleScroll);
   }, []);
-  
+
   const handleScroll = () => {
     const dropdown = dropdownRef.current;
     if (dropdown.scrollTop + dropdown.clientHeight >= dropdown.scrollHeight) {
@@ -36,6 +37,7 @@ function Dropdown({ options, initialValue, onChange }) {
     setSelectedOption(option);
     setSearchTerm('');
     onChange(option);
+    setIsOpen(false);
   };
 
   const handleInputChange = (event) => {
@@ -52,40 +54,52 @@ function Dropdown({ options, initialValue, onChange }) {
     }
   };
 
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
     <div className="input-container dropdown" ref={dropdownRef}>
-      <TextField
-        fullWidth
-        className="input-field"
-        placeholder="Choose Speakers"
-      />
-      <ul>
-        <li className="search-dropdown">
-          <TextField
-            fullWidth
-            className="input-field"
-            value={searchTerm}
-            onChange={handleInputChange}
-            placeholder="Search..."
-          />
-        </li>
-        <div className="dropdown-list">
-          <li className="add-option" onClick={handleAddOption}>
-            Add new option <span className="plus">+</span>
+      <div
+        className="position-relative dropdown-field"
+        onClick={toggleDropdown}
+      >
+        <TextField
+          fullWidth
+          className="input-field pe-none user-select-none"
+          placeholder="Choose Speakers"
+        />
+        <i class={`fas fa-chevron-${isOpen ? 'up' : 'down'} dropdown-icon`} />
+      </div>
+      {isOpen && (
+        <ul>
+          <li className="search-dropdown">
+            <TextField
+              fullWidth
+              className="input-field"
+              value={searchTerm}
+              onChange={handleInputChange}
+              placeholder="Search..."
+            />
           </li>
-          {filteredOptions.slice(offset, limit).map((option) => (
-            <li
-              key={option}
-              onClick={() => handleOptionClick(option)}
-              className={selectedOption === option ? 'active' : ''}
-            >
-              {option}
+          <div className="dropdown-list">
+            <li className="add-option" onClick={handleAddOption}>
+              Add new option <span className="plus">+</span>
             </li>
-          ))}
-          {filteredOptions.length === 0 && <li>No options found</li>}
-          {filteredOptions.length > limit && <li>Loading more options...</li>}
-        </div>
-      </ul>
+            {filteredOptions.slice(offset, limit).map((option) => (
+              <li
+                key={option}
+                onClick={() => handleOptionClick(option)}
+                className={selectedOption === option ? 'active' : ''}
+              >
+                {option}
+              </li>
+            ))}
+            {filteredOptions.length === 0 && <li>No options found</li>}
+            {filteredOptions.length > limit && <li>Loading more options...</li>}
+          </div>
+        </ul>
+      )}
     </div>
   );
 }

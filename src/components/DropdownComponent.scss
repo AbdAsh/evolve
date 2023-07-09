@@ -5,6 +5,17 @@
     border: 5px solid transparent !important;
     background-clip: padding-box !important;
   }
+  .dropdown-field {
+    cursor: pointer;
+  }
+  .dropdown-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translate(-50%, -50%);
+    font-size: 20px;
+    color: #757575;
+  }
   ul {
     position: absolute;
     top: 100%;

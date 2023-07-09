@@ -21,7 +21,7 @@ function Form(props) {
         <div className="col-12 input-container">
           <span className="input-label">Thumbnail</span>
           <UploadComponent />
-        </div>x
+        </div>
         <div className="row col-12">
           <div className="col-6 ps-0 input-container">
             <span className="input-label">
@@ -31,25 +31,34 @@ function Form(props) {
           </div>
           <div className="col-3 input-container">
             <span className="input-label">
-              Date<span className="asterisk">*</span>
+              From<span className="asterisk">*</span>
             </span>
             <TextField className="input-field" fullWidth variant="outlined" />
           </div>
           <div className="col-3 pe-0 input-container">
             <span className="input-label">
-              Date<span className="asterisk">*</span>
+              Till<span className="asterisk">*</span>
             </span>
             <TextField className="input-field" fullWidth variant="outlined" />
           </div>
         </div>
         <div className="col-12 input-container">
-          <span className="input-label"> Description <span className="asterisk">*</span> </span>
-          <TextField className="input-field textarea" multiline fullWidth variant="outlined" placeholder="Type details" />
+          <span className="input-label">
+            {' '}
+            Description <span className="asterisk">*</span>{' '}
+          </span>
+          <TextField
+            className="input-field textarea"
+            multiline
+            fullWidth
+            variant="outlined"
+            placeholder="Type details"
+          />
         </div>
-        <div className="col-12 line"/>
+        <div className="col-12 line" />
         <div className="col-12 input-container">
           <span className="input-label"> Speakers </span>
-          <Dropdown options={['lol','lmao','ye']} />
+          <Dropdown options={['lol', 'lmao', 'ye']} />
         </div>
       </Box>
     </div>
