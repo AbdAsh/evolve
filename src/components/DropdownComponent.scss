@@ -1,0 +1,94 @@
+.dropdown {
+  position: relative;
+  ::-webkit-scrollbar-thumb {
+    background: #ccc !important;
+    border: 5px solid transparent !important;
+    background-clip: padding-box !important;
+  }
+  ul {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border: 1px solid #ccc;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    box-sizing: border-box;
+    background: var(--gray-gray-700, #3c3c3c);
+
+    li {
+      padding: 10px 20px;
+      cursor: pointer;
+      border-top: 0.5px solid var(--gray-gray-600, #484848);
+      color: var(--gray-gray-100, #ddd);
+      font-family: Roboto;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 140.281%;
+      text-align: left;
+      &.active {
+        background-color: #484848;
+      }
+      &:hover {
+        background-color: #484848;
+      }
+
+      &.add-option {
+        font-weight: bold;
+        cursor: pointer;
+        position: relative;
+
+        &:hover {
+          background-color: #484848;
+        }
+        .plus {
+          position: absolute;
+          top: 50%;
+          right: 20px;
+          transform: translate(-50%, -50%);
+          font-size: 20px;
+        }
+      }
+
+      &.search-dropdown{
+        padding: 0;
+        border: none;
+        border-radius: 0;
+        color: #000;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 150%;
+        text-align: left;
+        fieldset {
+          border-radius: 0;
+          border: none;
+        }
+        .MuiInputBase-root {
+          border: none;
+          border-radius: 0;
+          font-weight: 500;
+          font-size: 14px;
+          line-height: 150%;
+          text-align: left;
+          .MuiInputBase-input {
+            padding: 10px 20px;
+          }
+        }
+      }
+    }
+  }
+
+  .selected-option {
+    margin-top: 5px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #fff;
+  }
+}
