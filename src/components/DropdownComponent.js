@@ -3,7 +3,7 @@ import './FormComponent.scss';
 import './DropdownComponent.scss';
 import { TextField } from '@mui/material';
 
-function Dropdown({ options, initialValue, onChange }) {
+function Dropdown({ placeholder, itemLabel, options, initialValue, onChange }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredOptions, setFilteredOptions] = useState(options);
   const [selectedOption, setSelectedOption] = useState(initialValue);
@@ -67,7 +67,7 @@ function Dropdown({ options, initialValue, onChange }) {
         <TextField
           fullWidth
           className="input-field pe-none user-select-none"
-          placeholder="Choose Speakers"
+          placeholder={placeholder}
         />
         <i class={`fas fa-chevron-${isOpen ? 'up' : 'down'} dropdown-icon`} />
       </div>
@@ -84,7 +84,7 @@ function Dropdown({ options, initialValue, onChange }) {
           </li>
           <div className="dropdown-list">
             <li className="add-option" onClick={handleAddOption}>
-              Add new option <span className="plus">+</span>
+              Add new {itemLabel ?? 'option'} <span className="plus">+</span>
             </li>
             {filteredOptions.slice(offset, limit).map((option) => (
               <li
