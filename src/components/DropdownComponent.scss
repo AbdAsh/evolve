@@ -10,8 +10,6 @@
     top: 100%;
     left: 0;
     right: 0;
-    max-height: 200px;
-    overflow-y: auto;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -20,7 +18,10 @@
     border-radius: 0 0 4px 4px;
     box-sizing: border-box;
     background: var(--gray-gray-700, #3c3c3c);
-
+    .dropdown-list {
+      max-height: 200px;
+      overflow-y: auto;
+    }
     li {
       padding: 10px 20px;
       cursor: pointer;
@@ -55,7 +56,7 @@
         }
       }
 
-      &.search-dropdown{
+      &.search-dropdown {
         padding: 0;
         border: none;
         border-radius: 0;

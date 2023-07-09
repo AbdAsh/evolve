@@ -3,7 +3,7 @@ import './FormComponent.scss';
 import './DropdownComponent.scss';
 import { TextField } from '@mui/material';
 
-function Dropdown({ options, initialValue }) {
+function Dropdown({ options, initialValue, onChange }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredOptions, setFilteredOptions] = useState(options);
   const [selectedOption, setSelectedOption] = useState(initialValue);
@@ -12,7 +12,7 @@ function Dropdown({ options, initialValue }) {
   const dropdownRef = useRef(null);
 
   useEffect(() => {
-    const filtered = options.filter(option =>
+    const filtered = options.filter((option) =>
       option.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredOptions(filtered);
@@ -24,20 +24,21 @@ function Dropdown({ options, initialValue }) {
     dropdown.addEventListener('scroll', handleScroll);
     return () => dropdown.removeEventListener('scroll', handleScroll);
   }, []);
-
+  
   const handleScroll = () => {
     const dropdown = dropdownRef.current;
     if (dropdown.scrollTop + dropdown.clientHeight >= dropdown.scrollHeight) {
-      setLimit(prevLimit => prevLimit + 10);
+      setLimit((prevLimit) => prevLimit + 10);
     }
   };
 
-  const handleOptionClick = option => {
+  const handleOptionClick = (option) => {
     setSelectedOption(option);
     setSearchTerm('');
+    onChange(option);
   };
 
-  const handleInputChange = event => {
+  const handleInputChange = (event) => {
     setSearchTerm(event.target.value);
     setOffset(0);
     setLimit(10);
@@ -46,7 +47,7 @@ function Dropdown({ options, initialValue }) {
   const handleAddOption = () => {
     const newOption = prompt('Enter a new option:');
     if (newOption) {
-      setFilteredOptions(prevOptions => [...prevOptions, newOption]);
+      setFilteredOptions((prevOptions) => [...prevOptions, newOption]);
       setSelectedOption(newOption);
     }
   };
@@ -60,24 +61,30 @@ function Dropdown({ options, initialValue }) {
       />
       <ul>
         <li className="search-dropdown">
-        <TextField
-          fullWidth
-          className="input-field"
-          value={searchTerm}
-          onChange={handleInputChange}
-          placeholder="Search..."
-        />
+          <TextField
+            fullWidth
+            className="input-field"
+            value={searchTerm}
+            onChange={handleInputChange}
+            placeholder="Search..."
+          />
         </li>
-        <li className="add-option" onClick={handleAddOption}>
-          Add new option <span className="plus">+</span>
-        </li>
-        {filteredOptions.slice(offset, limit).map(option => (
-          <li key={option} onClick={() => handleOptionClick(option)} className={selectedOption === option ? 'active' : ''}>
-            {option}
+        <div className="dropdown-list">
+          <li className="add-option" onClick={handleAddOption}>
+            Add new option <span className="plus">+</span>
           </li>
-        ))}
-        {filteredOptions.length === 0 && <li>No options found</li>}
-        {filteredOptions.length > limit && <li>Loading more options...</li>}
+          {filteredOptions.slice(offset, limit).map((option) => (
+            <li
+              key={option}
+              onClick={() => handleOptionClick(option)}
+              className={selectedOption === option ? 'active' : ''}
+            >
+              {option}
+            </li>
+          ))}
+          {filteredOptions.length === 0 && <li>No options found</li>}
+          {filteredOptions.length > limit && <li>Loading more options...</li>}
+        </div>
       </ul>
     </div>
   );
