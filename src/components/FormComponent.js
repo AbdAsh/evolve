@@ -52,7 +52,7 @@ function Form(props) {
           </div>
           <div className="col-3 pe-0 input-container">
             <span className="input-label">
-              To <span className="asterisk">*</span>
+              To
             </span>
             <Dropdown options={times} initialLimit={24} onChange={log} />
           </div>
@@ -105,7 +105,7 @@ function Form(props) {
           />
         </div>
         <div className="col-12 line" />
-        <div className="col-12 py-3 input-container">
+        <div className="col-12 py-3 input-container overflow-hidden">
           <span className="input-label"> Venue </span>
           <Dropdown
             placeholder="Choose Venues"
@@ -115,7 +115,7 @@ function Form(props) {
             showAddOption
             onChange={log}
           />
-          <ul>
+          <ul className='p-0 mt-2'>
             {['lol'].map((item) => {
               return (
                 <li key={item}>
