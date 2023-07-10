@@ -1,16 +1,13 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { TextField, Box } from '@mui/material';
 import './FormComponent.scss';
-import UploadComponent from './UploadComponent';
-import Dropdown from './DropdownComponent';
-import List from './ListComponent';
-import Modal from './ModalComponent';
-import CustomInput from './InputComponent';
+import { CustomInput, UploadComponent, Modal, List, Dropdown } from './index';
 import stadium from '../assets/stadium.png';
 
 function Form(props) {
   const [openSpeakerModal, setOpenSpeakerModal] = useState(false);
   const [openModeratorModal, setOpenModeratorModal] = useState(false);
+
   const [formData, setFormData] = useState({
     sessionTitle: '',
     sessionSubtitle: '',
@@ -29,6 +26,31 @@ function Form(props) {
     description: '',
   });
 
+  useEffect(() => {
+    const session = {
+      sessionTitle: 'Session Title',
+      sessionSubtitle: 'Session Subtitle',
+      date: '2021-10-10',
+      from: '12:00',
+      to: '13:00',
+      description: 'Session Description',
+      speakers: [
+        { avatar: null, title: 'John Doe', subtitle: 'CEO' },
+        { avatar: null, title: 'Jane Doe', subtitle: 'CEO' },
+      ],
+      moderators: [
+        { avatar: null, title: 'John Doe', subtitle: 'CEO' },
+        { avatar: null, title: 'Jane Doe', subtitle: 'CEO' },
+      ],
+      venue: {
+        avatar: null,
+        title: 'Lusail Stadium',
+        subtitle: 'Venue Capacity: 3.000',
+      },
+    };
+    setFormData(session);
+  }, []);
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData((prevFormData) => ({
@@ -40,7 +62,7 @@ function Form(props) {
   const handleDropdownChange = (name, value) => {
     if (
       formData[name].length &&
-      formData[name].some((item) => item.title === value.title)
+      formData[name].some((item) => item.value === value.value)
     )
       return;
     setFormData((prevFormData) => ({
@@ -56,8 +78,9 @@ function Form(props) {
       newErrors[item] = !formData[item] ? 'This field is required' : '';
     });
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return Object.values(newErrors).every((item) => item === '');
   };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     if (!validate()) return;
@@ -87,7 +110,7 @@ function Form(props) {
   const times = Array.from(Array(24).keys()).map((item) => {
     const hour = item % 12 || 12;
     const ampm = item < 12 ? 'AM' : 'PM';
-    return { label: `${hour}:00 ${ampm}`, value: item };
+    return { label: `${hour}:00 ${ampm}`, value: `${item}:00` };
   });
 
   return (
@@ -133,7 +156,7 @@ function Form(props) {
             <Dropdown
               options={times}
               initialLimit={24}
-              value={formData.from}
+              initialValue={formData.from}
               onChange={(value) => handleDropdownChange('from', value)}
               error={errors.from}
             />
@@ -145,6 +168,7 @@ function Form(props) {
               initialLimit={24}
               value={formData.to}
               onChange={(value) => handleDropdownChange('to', value)}
+              initialValue={formData.to}
             />
           </div>
         </div>

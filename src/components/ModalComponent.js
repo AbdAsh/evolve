@@ -8,8 +8,7 @@ import {
 } from '@mui/material';
 import './ModalComponent.scss';
 import './ModalComponent.scss';
-import UploadComponent from './UploadComponent';
-import CustomInput from './InputComponent';
+import {UploadComponent, CustomInput} from './index';
 const Modal = ({ title, open = true, handleSubmit, handleClose }) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
