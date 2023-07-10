@@ -20,14 +20,17 @@ function Dropdown({
   const [limit, setLimit] = useState(initialLimit);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const hasOptions = options && options.length > 0;
 
   useEffect(() => {
-    const filtered = options.filter((option) =>
-      option.label.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filtered = hasOptions
+      ? options.filter((option) =>
+          option.label.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      : [];
     setFilteredOptions(filtered);
     setOffset(0);
-  }, [options, searchTerm]);
+  }, [options, searchTerm, hasOptions]);
 
   useEffect(() => {
     const dropdown = dropdownRef.current;
@@ -79,12 +82,15 @@ function Dropdown({
           className="input-field pe-none user-select-none"
           placeholder={placeholder}
           value={selectedOption?.label}
+          key={selectedOption?.value}
         />
         <i
-          className={`fas fa-chevron-${isOpen ? 'up' : 'down'} dropdown-icon`}
+          className={`fas fa-chevron-${
+            isOpen && hasOptions ? 'up' : 'down'
+          } dropdown-icon`}
         />
       </div>
-      {isOpen && (
+      {isOpen && hasOptions && (
         <ul>
           {showSearch && (
             <li className="search-dropdown">
@@ -103,9 +109,9 @@ function Dropdown({
                 Add new {itemLabel ?? 'option'} <span className="plus">+</span>
               </li>
             )}
-            {filteredOptions.slice(offset, limit).map((option) => (
+            {filteredOptions.slice(offset, limit).map((option, i) => (
               <li
-                key={option.value}
+                key={i}
                 onClick={() => handleOptionClick(option)}
                 className={selectedOption === option ? 'active' : ''}
               >
