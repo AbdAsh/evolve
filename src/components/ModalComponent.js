@@ -15,7 +15,8 @@ const Modal = ({ title, open = true, handleSubmit, handleClose }) => {
   const [email, setEmail] = useState('');
   const [errors, setErrors] = useState({
     firstName: '',
-    lastName: ''
+    lastName: '',
+    email: ''
   });
 
   const handleFirstNameChange = (event) => {
@@ -34,6 +35,10 @@ const Modal = ({ title, open = true, handleSubmit, handleClose }) => {
     const newErrors = {};
     newErrors.firstName = firstName ? '' : 'This field is required';
     newErrors.lastName = lastName ? '' : 'This field is required';
+    newErrors.email = email ? '' : 'This field is required';
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      newErrors.email = 'Invalid email format';
+    }
     setErrors(newErrors);
     return Object.values(newErrors).every((item) => item === '');
   };
@@ -42,7 +47,7 @@ const Modal = ({ title, open = true, handleSubmit, handleClose }) => {
     event.preventDefault();
     if (!validate()) return;
     handleSubmit({ firstName, lastName, email });
-    handleClose();
+    close();
   };
 
   const close = () => {
@@ -51,7 +56,8 @@ const Modal = ({ title, open = true, handleSubmit, handleClose }) => {
     setEmail('');
     setErrors({
       firstName: '',
-      lastName: ''
+      lastName: '',
+      email: ''
     });
     handleClose();
   };
@@ -87,6 +93,8 @@ const Modal = ({ title, open = true, handleSubmit, handleClose }) => {
             label="Email"
             value={email}
             onChange={handleEmailChange}
+            required
+            error={errors.email}
           />
         </div>
       </DialogContent>

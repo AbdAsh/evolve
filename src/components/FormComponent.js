@@ -32,9 +32,8 @@ function Form(props) {
     description: '',
   });
   const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
   const [offset, setOffset] = useState(0);
-  const [limit, setLimit] = useState(10);
+  const [limit] = useState(10);
   const [toUpdate, setToUpdate] = useState(null);
   const [lastOffset, setLastOffset] = useState(false);
 
@@ -124,7 +123,8 @@ function Form(props) {
   const handleSearch = (value, type) => {
     setLoading(true);
     // if no value is passed, reset the options
-    if (!value) {
+    if (value === '') {
+      setLoading(false);
       return setToUpdate(type ?? null);
     }
     axios
@@ -175,6 +175,19 @@ function Form(props) {
       ),
     }));
   };
+
+  const submitModal = (user) => {
+    const {firstName, lastName, email} = user;
+    axios.post('/create-users',{
+      event_id: 8,
+      first_name: firstName,
+      last_name: lastName,
+      email: email,
+    }).then((res) => {
+      setToUpdate(null);
+      setOffset(0);
+    }).catch((err) => console.log(err));
+  }
 
   return (
     <div className="form-container">
@@ -327,13 +340,13 @@ function Form(props) {
         title="Add Speaker"
         open={openSpeakerModal}
         handleClose={() => setOpenSpeakerModal(false)}
-        handleSubmit={(data) => console.log(data)}
+        handleSubmit={submitModal}
       />
       <Modal
         title="Add Moderator"
         open={openModeratorModal}
         handleClose={() => setOpenModeratorModal(false)}
-        handleSubmit={(data) => console.log(data)}
+        handleSubmit={submitModal}
       />
     </div>
   );
