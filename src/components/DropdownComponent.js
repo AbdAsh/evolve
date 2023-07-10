@@ -17,7 +17,6 @@ function Dropdown({
   onSearch,
   onScrollEnd,
 }) {
-  const [searchTerm, setSearchTerm] = useState('');
   const [selectedOption, setSelectedOption] = useState(initialValue);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -35,7 +34,7 @@ function Dropdown({
     if (isOpen && hasOptions){
       const dropdown =  dropdownRef.current;
       const handleScroll = () => {
-        if (dropdown.scrollTop + dropdown.clientHeight >= dropdown.scrollHeight) {
+        if (dropdown.scrollTop + dropdown.clientHeight + 10 >= dropdown.scrollHeight) {
           onScrollEnd();
         }
       };
@@ -47,13 +46,12 @@ function Dropdown({
 
   const handleOptionClick = (option) => {
     setSelectedOption(option);
-    setSearchTerm('');
     onChange(option.value);
     setIsOpen(false);
   };
 
   const handleInputChange = (event) => {
-    onSearch(event.target.value);
+    onSearch ? onSearch(event.target.value) : console.log('no onSearch prop') ;
   };
 
   const handleAddOption = () => {
@@ -92,7 +90,6 @@ function Dropdown({
               <TextField
                 fullWidth
                 className="input-field"
-                value={searchTerm}
                 onChange={handleInputChange}
                 placeholder="Search..."
               />
