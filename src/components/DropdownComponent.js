@@ -3,7 +3,15 @@ import './FormComponent.scss';
 import './DropdownComponent.scss';
 import { TextField } from '@mui/material';
 
-function Dropdown({ placeholder, itemLabel, options, initialValue, onChange }) {
+function Dropdown({
+  showSearch,
+  showAddOption,
+  placeholder,
+  itemLabel,
+  options,
+  initialValue,
+  onChange,
+}) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredOptions, setFilteredOptions] = useState(options);
   const [selectedOption, setSelectedOption] = useState(initialValue);
@@ -73,19 +81,23 @@ function Dropdown({ placeholder, itemLabel, options, initialValue, onChange }) {
       </div>
       {isOpen && (
         <ul>
-          <li className="search-dropdown">
-            <TextField
-              fullWidth
-              className="input-field"
-              value={searchTerm}
-              onChange={handleInputChange}
-              placeholder="Search..."
-            />
-          </li>
-          <div className="dropdown-list">
-            <li className="add-option" onClick={handleAddOption}>
-              Add new {itemLabel ?? 'option'} <span className="plus">+</span>
+          {showSearch && (
+            <li className="search-dropdown">
+              <TextField
+                fullWidth
+                className="input-field"
+                value={searchTerm}
+                onChange={handleInputChange}
+                placeholder="Search..."
+              />
             </li>
+          )}
+          <div className="dropdown-list">
+            {showAddOption && (
+              <li className="add-option" onClick={handleAddOption}>
+                Add new {itemLabel ?? 'option'} <span className="plus">+</span>
+              </li>
+            )}
             {filteredOptions.slice(offset, limit).map((option) => (
               <li
                 key={option}

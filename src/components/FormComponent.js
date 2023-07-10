@@ -3,6 +3,7 @@ import './FormComponent.scss';
 import UploadComponent from './UploadComponent';
 import Dropdown from './DropdownComponent';
 import List from './ListComponent';
+import stadium from '../assets/stadium.png';
 function Form(props) {
   // const { inputs } = props
   const CustomInput = (props) => {
@@ -63,6 +64,8 @@ function Form(props) {
             placeholder="Choose Speakers"
             itemLabel="speaker"
             options={['lol', 'lmao', 'ye']}
+            showSearch
+            showAddOption
           />
           <List
             items={[
@@ -77,6 +80,8 @@ function Form(props) {
             placeholder="Choose Moderators"
             itemLabel="moderator"
             options={['lol', 'lmao', 'ye']}
+            showSearch
+            showAddOption
           />
           <List
             items={[
@@ -89,16 +94,31 @@ function Form(props) {
         <div className="col-12 py-3 input-container">
           <span className="input-label"> Venue </span>
           <Dropdown
-            placeholder="Choose Moderators"
-            itemLabel="moderator"
+            placeholder="Choose Venues"
+            itemLabel="venue"
             options={['lol', 'lmao', 'ye']}
+            showSearch
+            showAddOption
           />
-          <List
-            items={[
-              { title: 'lol', subtitle: 'lmao' },
-              { title: 'lol', subtitle: 'lmao' },
-            ]}
-          />
+          <ul>
+            {['lol'].map((item) => {
+              return (
+                <li>
+                  <div className="main-info p-0 w-100" style={{height: "100px"}}>
+                    <img
+                      src={stadium}
+                      alt="avatar"
+                      className="h-100"
+                    />
+                    <div className="col-12 ps-3 input-container">
+                    <p className="list-title">Lusail Stadium</p>
+                    <p className="list-subtitle m-0">Venue Capacity: 3.000</p>
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
         </div>
       </Box>
     </div>
