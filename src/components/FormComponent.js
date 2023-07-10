@@ -3,11 +3,17 @@ import { TextField, Box } from '@mui/material';
 import './FormComponent.scss';
 import { CustomInput, UploadComponent, Modal, List, Dropdown } from './index';
 import stadium from '../assets/stadium.png';
-
+import axios from 'axios';
+// set axios default headers
+axios.defaults.baseURL =
+  'https://qa-testing-backend-293b1363694d.herokuapp.com/api/v3';
+axios.defaults.headers.common['Authorization'] =
+  'Bearer eyJhbGciOiJSUzI1NiJ9.eyJpZCI6MjEyLCJ0eXBlIjoidXNlciIsInJhbiI6IkFQWEVFT0hMWEhSWk1ISlRUWFNZIiwic3RhdHVzIjoxfQ.ZgAWMwcCTYvVTARUT8wjxGCpLn5vRsDEt-zpzIPhsRN4np-sqWZ6YpCOPZsD40MWPjCfAepXdLIRW6JLiJYla8AHTogRMY-UIyqq8KvxhO8euOGVLLm6-jbhws7h4uznwQrc8mb8IywKm0Qagm2i5NdM9bRotWWW3viNXVxAOXfpx5ciRCSLlCAEisC47s5n7GM2ytT2BIeLEnSK1p9XvrF7-1Z-F8yjsKTG29wjejjZcanvY2_j53nR62glm-ZvIhP6jXPLlEaE1jttfOYC3BaJSHbdYdEXzSLzsAaB2HI1ZmtFdat7d 0cKsSvCgu6Z73uzvC6oOtbhywQQfu2lOw';
 function Form(props) {
   const [openSpeakerModal, setOpenSpeakerModal] = useState(false);
   const [openModeratorModal, setOpenModeratorModal] = useState(false);
-
+  const [speakerOptions, setSpeakerOptions] = useState([]);
+  const [moderatorOptions, setModeratorOptions] = useState([]);
   const [formData, setFormData] = useState({
     sessionTitle: '',
     sessionSubtitle: '',
@@ -25,31 +31,62 @@ function Form(props) {
     from: '',
     description: '',
   });
+  const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [offset, setOffset] = useState(0);
+  const [limit, setLimit] = useState(10);
+  const [toUpdate, setToUpdate] = useState(null);
+  const [lastOffset, setLastOffset] = useState(false);
 
   useEffect(() => {
-    const session = {
-      sessionTitle: 'Session Title',
-      sessionSubtitle: 'Session Subtitle',
-      date: '2021-10-10',
-      from: '12:00',
-      to: '13:00',
-      description: 'Session Description',
-      speakers: [
-        { avatar: null, title: 'John Doe', subtitle: 'CEO' },
-        { avatar: null, title: 'Jane Doe', subtitle: 'CEO' },
-      ],
-      moderators: [
-        { avatar: null, title: 'John Doe', subtitle: 'CEO' },
-        { avatar: null, title: 'Jane Doe', subtitle: 'CEO' },
-      ],
-      venue: {
-        avatar: null,
-        title: 'Lusail Stadium',
-        subtitle: 'Venue Capacity: 3.000',
-      },
-    };
-    setFormData(session);
-  }, []);
+    if (lastOffset) return;
+    setLoading(true);
+    axios
+      .get(`/get-users?event_id=8&offset=${offset}&limit=${limit}`)
+      .then((res) => {
+        setLastOffset(res.data.last_offset);
+        const newOptions = res.data.users.map((option) => ({
+          label: `${option.first_name} ${option.last_name}`,
+          value: option.id,
+          ...option,
+        }));
+        if (toUpdate === 'speaker')
+          setSpeakerOptions((prevOptions) => [...prevOptions, ...newOptions]);
+        if (toUpdate === 'moderator')
+          setModeratorOptions((prevOptions) => [...prevOptions, ...newOptions]);
+        if (!toUpdate) {
+          setSpeakerOptions(() => [...newOptions]);
+          setModeratorOptions(() => [...newOptions]);
+        }
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setLoading(false));
+  }, [offset, limit, toUpdate, lastOffset]);
+
+  // useEffect(() => {
+  // const session = {
+  //   sessionTitle: 'Session Title',
+  //   sessionSubtitle: 'Session Subtitle',
+  //   date: '2021-10-10',
+  //   from: '12:00',
+  //   to: '13:00',
+  //   description: 'Session Description',
+  //   speakers: [
+  //     { avatar: null, title: 'John Doe', subtitle: 'CEO' },
+  //     { avatar: null, title: 'Jane Doe', subtitle: 'CEO' },
+  //   ],
+  //   moderators: [
+  //     { avatar: null, title: 'John Doe', subtitle: 'CEO' },
+  //     { avatar: null, title: 'Jane Doe', subtitle: 'CEO' },
+  //   ],
+  //   venue: {
+  //     avatar: null,
+  //     title: 'Lusail Stadium',
+  //     subtitle: 'Venue Capacity: 3.000',
+  //   },
+  // };
+  // setFormData(session);
+  // }, []);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -60,10 +97,7 @@ function Form(props) {
   };
 
   const handleDropdownChange = (name, value) => {
-    if (
-      formData[name].length &&
-      formData[name].some((item) => item.value === value.value)
-    )
+    if (formData[name].length && formData[name].some((item) => item === value))
       return;
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -87,31 +121,39 @@ function Form(props) {
     console.log(formData);
   };
 
-  const speakers = [
-    {
-      label: 'John Doe',
-      value: { avatar: null, title: 'John Doe', subtitle: 'CEO' },
-    },
-    {
-      label: 'Jane Doe',
-      value: { avatar: null, title: 'Jane Doe', subtitle: 'CEO' },
-    },
-  ];
-  const moderators = [
-    {
-      label: 'John Doe',
-      value: { avatar: null, title: 'John Doe', subtitle: 'CEO' },
-    },
-    {
-      label: 'Jane Doe',
-      value: { avatar: null, title: 'Jane Doe', subtitle: 'CEO' },
-    },
-  ];
+  const increaseOffset = (type) => {
+    setToUpdate(type ?? null);
+    setOffset((prevOffset) => prevOffset + 1);
+  };
+
   const times = Array.from(Array(24).keys()).map((item) => {
     const hour = item % 12 || 12;
     const ampm = item < 12 ? 'AM' : 'PM';
     return { label: `${hour}:00 ${ampm}`, value: `${item}:00` };
   });
+
+  const findUsersById = (users, ids) =>
+    ids.reduce((acc, id) => {
+      const user = users.find((user) => user.id === id);
+      if (user && !acc.some((u) => u.id === user.id)) acc.push(user);
+      return acc;
+    }, []);
+
+  const deleteSpeaker = (speaker) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      speakers: prevFormData.speakers.filter((item) => item !== speaker.id),
+    }));
+  };
+
+  const deleteModerator = (moderator) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      moderators: prevFormData.moderators.filter(
+        (item) => item !== moderator.id
+      ),
+    }));
+  };
 
   return (
     <div className="form-container">
@@ -155,7 +197,6 @@ function Form(props) {
             </span>
             <Dropdown
               options={times}
-              initialLimit={24}
               initialValue={formData.from}
               onChange={(value) => handleDropdownChange('from', value)}
               error={errors.from}
@@ -165,7 +206,6 @@ function Form(props) {
             <span className="input-label">To</span>
             <Dropdown
               options={times}
-              initialLimit={24}
               value={formData.to}
               onChange={(value) => handleDropdownChange('to', value)}
               initialValue={formData.to}
@@ -195,28 +235,38 @@ function Form(props) {
           <Dropdown
             placeholder="Choose Speakers"
             itemLabel="speaker"
-            options={speakers}
+            loading={loading}
+            options={speakerOptions}
             showSearch
             showAddOption
             value={formData.speakers}
             onAdd={() => setOpenSpeakerModal(true)}
             onChange={(value) => handleDropdownChange('speakers', value)}
+            onScrollEnd={() => increaseOffset('speaker')}
           />
-          <List items={formData.speakers} />
+          <List
+            items={[...findUsersById(speakerOptions, formData.speakers)]}
+            onDelete={deleteSpeaker}
+          />
         </div>
         <div className="col-12 py-3 input-container">
           <span className="input-label"> Moderators </span>
           <Dropdown
             placeholder="Choose Moderators"
             itemLabel="moderator"
-            options={moderators}
+            loading={loading}
+            options={moderatorOptions}
             showSearch
             showAddOption
             value={formData.moderators}
             onAdd={() => setOpenModeratorModal(true)}
             onChange={(value) => handleDropdownChange('moderators', value)}
+            onScrollEnd={() => increaseOffset('moderator')}
           />
-          <List items={formData.moderators} />
+          <List
+            items={[...findUsersById(moderatorOptions, formData.moderators)]}
+            onDelete={deleteModerator}
+          />
         </div>
         <div className="col-12 line" />
         <div className="col-12 py-3 input-container overflow-hidden">
