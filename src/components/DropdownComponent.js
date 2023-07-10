@@ -10,16 +10,15 @@ function Dropdown({
   itemLabel,
   options,
   initialValue,
-  initialLimit,
+  loading,
   error,
   onChange,
-  onAdd
+  onAdd,
+  onSearch,
+  onScrollEnd,
 }) {
   const [searchTerm, setSearchTerm] = useState('');
-  const [filteredOptions, setFilteredOptions] = useState(options);
   const [selectedOption, setSelectedOption] = useState(initialValue);
-  const [offset, setOffset] = useState(0);
-  const [limit, setLimit] = useState(initialLimit);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
   const hasOptions = options && options.length > 0;
@@ -33,27 +32,18 @@ function Dropdown({
   }, [hasOptions, options, initialValue]);
 
   useEffect(() => {
-    const filtered = hasOptions
-      ? options.filter((option) =>
-          option.label.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-      : [];
-    setFilteredOptions(filtered);
-    setOffset(0);
-  }, [options, searchTerm, hasOptions]);
-
-  useEffect(() => {
-    const dropdown = dropdownRef.current;
-    dropdown.addEventListener('scroll', handleScroll);
-    return () => dropdown.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const handleScroll = () => {
-    const dropdown = dropdownRef.current;
-    if (dropdown.scrollTop + dropdown.clientHeight >= dropdown.scrollHeight) {
-      setLimit((prevLimit) => prevLimit + 10);
+    if (isOpen && hasOptions){
+      const dropdown =  dropdownRef.current;
+      const handleScroll = () => {
+        if (dropdown.scrollTop + dropdown.clientHeight >= dropdown.scrollHeight) {
+          onScrollEnd();
+        }
+      };
+      dropdown.addEventListener('scroll', handleScroll);
+      return () => dropdown.removeEventListener('scroll', handleScroll);
     }
-  };
+  }, [isOpen, hasOptions, onScrollEnd]);
+
 
   const handleOptionClick = (option) => {
     setSelectedOption(option);
@@ -63,9 +53,7 @@ function Dropdown({
   };
 
   const handleInputChange = (event) => {
-    setSearchTerm(event.target.value);
-    setOffset(0);
-    setLimit(initialLimit);
+    onSearch(event.target.value);
   };
 
   const handleAddOption = () => {
@@ -77,7 +65,7 @@ function Dropdown({
   };
 
   return (
-    <div className="input-container dropdown mb-0" ref={dropdownRef}>
+    <div className="input-container dropdown mb-0">
       <div
         className="position-relative dropdown-field"
         onClick={toggleDropdown}
@@ -110,13 +98,13 @@ function Dropdown({
               />
             </li>
           )}
-          <div className="dropdown-list">
+          <div className="dropdown-list" ref={dropdownRef}>
             {showAddOption && (
               <li className="add-option" onClick={handleAddOption}>
                 Add new {itemLabel ?? 'option'} <span className="plus">+</span>
               </li>
             )}
-            {filteredOptions.slice(offset, limit).map((option, i) => (
+            {options.map((option, i) => (
               <li
                 key={i}
                 onClick={() => handleOptionClick(option)}
@@ -125,9 +113,9 @@ function Dropdown({
                 {option.label}
               </li>
             ))}
-            {filteredOptions.length === 0 && <li>No options found</li>}
-            {filteredOptions.length > limit && <li>Loading more options...</li>}
           </div>
+            {options.length === 0 && <li>No options found</li>}
+            {loading && <li>Loading more options...</li>}
         </ul>
       )}
     </div>
