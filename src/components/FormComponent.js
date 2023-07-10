@@ -1,40 +1,109 @@
+import { useState } from 'react';
 import { TextField, Box } from '@mui/material';
 import './FormComponent.scss';
 import UploadComponent from './UploadComponent';
 import Dropdown from './DropdownComponent';
 import List from './ListComponent';
 import stadium from '../assets/stadium.png';
+
 function Form(props) {
-  // const { inputs } = props
+  const [formData, setFormData] = useState({
+    sessionTitle: '',
+    sessionSubtitle: '',
+    date: '',
+    from: '',
+    to: '',
+    description: '',
+    speakers: [],
+    moderators: [],
+    venue: '',
+  });
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+  };
+
+  const handleDropdownChange = (name, value) => {
+    if (formData[name].length && formData[name].some((item) => item.title === value.title)) return;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: [...prevFormData[name], value],
+    }));
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log(formData);
+  };
+
   const CustomInput = (props) => {
+    const { label, required, name, value, onChange } = props;
     return (
       <>
         <span className="input-label">
-          {props.label} {props.required && <span className="asterisk">*</span>}
+          {label} {required && <span className="asterisk">*</span>}
         </span>
         <TextField
           className="input-field"
           fullWidth
           variant="outlined"
-          onChange={props.onChange}
+          onChange={(e) => onChange(e)}
+          name={name}
+          value={value}
+          key={name}
         />
       </>
     );
   };
-  const log = (value) => console.log(value);
+  const speakers = [
+    {
+      label: 'John Doe',
+      value: { avatar: null, title: 'John Doe', subtitle: 'CEO' },
+    },
+    {
+      label: 'Jane Doe',
+      value: { avatar: null, title: 'Jane Doe', subtitle: 'CEO' },
+    },
+  ];
+  const moderators = [
+    {
+      label: 'John Doe',
+      value: { avatar: null, title: 'John Doe', subtitle: 'CEO' },
+    },
+    {
+      label: 'Jane Doe',
+      value: { avatar: null, title: 'Jane Doe', subtitle: 'CEO' },
+    },
+  ];
   const times = Array.from(Array(24).keys()).map((item) => {
     const hour = item % 12 || 12;
     const ampm = item < 12 ? 'AM' : 'PM';
     return { label: `${hour}:00 ${ampm}`, value: item };
   });
+
   return (
     <div className="form-container">
-      <Box component="form" className="form p-5">
+      <Box component="form" className="form p-5" onSubmit={handleSubmit}>
         <div className="col-12 py-3 input-container">
-          <CustomInput label="Session Title" required />
+          {CustomInput({
+            label: 'Session Title',
+            required: true,
+            name: 'sessionTitle',
+            value: formData.sessionTitle,
+            onChange: handleInputChange,
+          })}
         </div>
         <div className="col-12 py-3 input-container">
-          <CustomInput label="Session Subtitle" />
+          {CustomInput({
+            label: 'Session Subtitle',
+            name: 'sessionSubtitle',
+            value: formData.sessionSubtitle,
+            onChange: handleInputChange,
+          })}
         </div>
         <div className="col-12 py-3 input-container">
           <span className="input-label">Thumbnail</span>
@@ -42,19 +111,33 @@ function Form(props) {
         </div>
         <div className="row col-12  py-3">
           <div className="col-6 ps-0 input-container">
-            <CustomInput label="Date" required />
+            {CustomInput({
+              label: 'Date',
+              required: true,
+              name: 'date',
+              value: formData.date,
+              onChange: handleInputChange,
+            })}
           </div>
           <div className="col-3 input-container">
             <span className="input-label">
               From <span className="asterisk">*</span>
             </span>
-            <Dropdown options={times} initialLimit={24} onChange={log} />
+            <Dropdown
+              options={times}
+              initialLimit={24}
+              value={formData.from}
+              onChange={(value) => handleDropdownChange('from', value)}
+            />
           </div>
           <div className="col-3 pe-0 input-container">
-            <span className="input-label">
-              To
-            </span>
-            <Dropdown options={times} initialLimit={24} onChange={log} />
+            <span className="input-label">To</span>
+            <Dropdown
+              options={times}
+              initialLimit={24}
+              value={formData.to}
+              onChange={(value) => handleDropdownChange('to', value)}
+            />
           </div>
         </div>
         <div className="col-12 py-3 input-container">
@@ -67,6 +150,9 @@ function Form(props) {
             fullWidth
             variant="outlined"
             placeholder="Type details"
+            onChange={handleInputChange}
+            name="description"
+            value={formData.description}
           />
         </div>
         <div className="col-12 line" />
@@ -75,34 +161,26 @@ function Form(props) {
           <Dropdown
             placeholder="Choose Speakers"
             itemLabel="speaker"
-            options={[{ label: 'lol', value: 'lol' }]}
+            options={speakers}
             showSearch
             showAddOption
-            onChange={log}
+            value={formData.speakers}
+            onChange={(value) => handleDropdownChange('speakers', value)}
           />
-          <List
-            items={[
-              { title: 'lol', subtitle: 'lmao' },
-              { title: 'lol', subtitle: 'lmao' },
-            ]}
-          />
+          <List items={formData.speakers} />
         </div>
         <div className="col-12 py-3 input-container">
           <span className="input-label"> Moderators </span>
           <Dropdown
             placeholder="Choose Moderators"
             itemLabel="moderator"
-            options={[{ label: 'lol', value: 'lol' }]}
+            options={moderators}
             showSearch
             showAddOption
-            onChange={log}
+            value={formData.moderators}
+            onChange={(value) => handleDropdownChange('moderators', value)}
           />
-          <List
-            items={[
-              { title: 'lol', subtitle: 'lmao' },
-              { title: 'lol', subtitle: 'lmao' },
-            ]}
-          />
+          <List items={formData.moderators} />
         </div>
         <div className="col-12 line" />
         <div className="col-12 py-3 input-container overflow-hidden">
@@ -110,12 +188,12 @@ function Form(props) {
           <Dropdown
             placeholder="Choose Venues"
             itemLabel="venue"
-            options={[{ label: 'lol', value: 'lol' }]}
             showSearch
             showAddOption
-            onChange={log}
+            value={formData.venue}
+            onChange={(value) => handleDropdownChange('venue', value)}
           />
-          <ul className='p-0 mt-2'>
+          <ul className="p-0 mt-2">
             {['lol'].map((item) => {
               return (
                 <li key={item}>
@@ -134,6 +212,7 @@ function Form(props) {
             })}
           </ul>
         </div>
+        <button type="submit">Submit</button>
       </Box>
     </div>
   );
