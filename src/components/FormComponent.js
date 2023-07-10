@@ -9,7 +9,7 @@ import CustomInput from './InputComponent';
 import stadium from '../assets/stadium.png';
 
 function Form(props) {
-  const [openSpeakerModal, setOpenSpeakerModal] = useState(true);
+  const [openSpeakerModal, setOpenSpeakerModal] = useState(false);
   const [openModeratorModal, setOpenModeratorModal] = useState(false);
   const [formData, setFormData] = useState({
     sessionTitle: '',
@@ -21,6 +21,12 @@ function Form(props) {
     speakers: [],
     moderators: [],
     venue: '',
+  });
+  const [errors, setErrors] = useState({
+    sessionTitle: '',
+    date: '',
+    from: '',
+    description: '',
   });
 
   const handleInputChange = (event) => {
@@ -43,8 +49,18 @@ function Form(props) {
     }));
   };
 
+  const validate = () => {
+    const required = ['sessionTitle', 'date', 'from', 'description'];
+    const newErrors = {};
+    required.forEach((item) => {
+      newErrors[item] = !formData[item] ? 'This field is required' : '';
+    });
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
   const handleSubmit = (event) => {
     event.preventDefault();
+    if (!validate()) return;
     console.log(formData);
   };
 
@@ -84,6 +100,7 @@ function Form(props) {
             name: 'sessionTitle',
             value: formData.sessionTitle,
             onChange: handleInputChange,
+            error: errors.sessionTitle,
           })}
         </div>
         <div className="col-12 py-3 input-container">
@@ -106,6 +123,7 @@ function Form(props) {
               name: 'date',
               value: formData.date,
               onChange: handleInputChange,
+              error: errors.date,
             })}
           </div>
           <div className="col-3 input-container">
@@ -117,6 +135,7 @@ function Form(props) {
               initialLimit={24}
               value={formData.from}
               onChange={(value) => handleDropdownChange('from', value)}
+              error={errors.from}
             />
           </div>
           <div className="col-3 pe-0 input-container">
@@ -142,6 +161,8 @@ function Form(props) {
             onChange={handleInputChange}
             name="description"
             value={formData.description}
+            error={errors.description ? true : false}
+            helperText={errors.description}
           />
         </div>
         <div className="col-12 line" />
@@ -154,6 +175,7 @@ function Form(props) {
             showSearch
             showAddOption
             value={formData.speakers}
+            onAdd={() => setOpenSpeakerModal(true)}
             onChange={(value) => handleDropdownChange('speakers', value)}
           />
           <List items={formData.speakers} />
@@ -167,6 +189,7 @@ function Form(props) {
             showSearch
             showAddOption
             value={formData.moderators}
+            onAdd={() => setOpenModeratorModal(true)}
             onChange={(value) => handleDropdownChange('moderators', value)}
           />
           <List items={formData.moderators} />
