@@ -34,6 +34,17 @@
     .dropdown-list {
       max-height: 200px;
       overflow-y: auto;
+      position: relative;
+      .background-dim{
+        background-color: #000000;
+        opacity: 0.5;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 2;
+      }
     }
     li {
       padding: 10px 20px;

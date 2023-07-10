@@ -121,6 +121,27 @@ function Form(props) {
     console.log(formData);
   };
 
+  const handleSearch = (value, type) => {
+    setLoading(true);
+    // if no value is passed, reset the options
+    if (!value) {
+      return setToUpdate(type ?? null);
+    }
+    axios
+      .get(`/search-users?event_id=8&search=${value}`)
+      .then((res) => {
+        const newOptions = res.data.users.map((option) => ({
+          label: `${option.first_name} ${option.last_name}`,
+          value: option.id,
+          ...option,
+        }));
+        if (type === 'speaker') setSpeakerOptions(newOptions);
+        if (type === 'moderator') setModeratorOptions(newOptions);
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setLoading(false));
+  };
+
   const increaseOffset = (type) => {
     setToUpdate(type ?? null);
     setOffset((prevOffset) => prevOffset + 1);
@@ -243,6 +264,7 @@ function Form(props) {
             onAdd={() => setOpenSpeakerModal(true)}
             onChange={(value) => handleDropdownChange('speakers', value)}
             onScrollEnd={() => increaseOffset('speaker')}
+            onSearch={(e) => handleSearch(e, 'speaker')}
           />
           <List
             items={[...findUsersById(speakerOptions, formData.speakers)]}
@@ -262,6 +284,7 @@ function Form(props) {
             onAdd={() => setOpenModeratorModal(true)}
             onChange={(value) => handleDropdownChange('moderators', value)}
             onScrollEnd={() => increaseOffset('moderator')}
+            onSearch={(e) => handleSearch(e, 'moderator')}
           />
           <List
             items={[...findUsersById(moderatorOptions, formData.moderators)]}

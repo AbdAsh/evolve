@@ -72,7 +72,6 @@ function Dropdown({
           fullWidth
           className="input-field pe-none user-select-none"
           placeholder={placeholder}
-          value={selectedOption?.label}
           key={selectedOption?.value}
           error={error ? true : false}
           helperText={!isOpen && error ? error : null}
@@ -83,7 +82,7 @@ function Dropdown({
           } dropdown-icon`}
         />
       </div>
-      {isOpen && hasOptions && (
+      {isOpen && (
         <ul>
           {showSearch && (
             <li className="search-dropdown">
@@ -96,6 +95,7 @@ function Dropdown({
             </li>
           )}
           <div className="dropdown-list" ref={dropdownRef}>
+            {loading && <div className="background-dim"/>}
             {showAddOption && (
               <li className="add-option" onClick={handleAddOption}>
                 Add new {itemLabel ?? 'option'} <span className="plus">+</span>
