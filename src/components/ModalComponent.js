@@ -36,7 +36,7 @@ const Modal = ({ title, open = true, handleSubmit, handleClose }) => {
     newErrors.firstName = firstName ? '' : 'This field is required';
     newErrors.lastName = lastName ? '' : 'This field is required';
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return Object.values(newErrors).every((item) => item === '');
   };
   
   const handleAdd = (event) => {

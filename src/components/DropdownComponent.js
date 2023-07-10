@@ -23,6 +23,15 @@ function Dropdown({
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
   const hasOptions = options && options.length > 0;
+
+  useEffect(() => {
+    // match the initial value to the option object
+    if (initialValue && hasOptions) {
+      const option = options.find((option) => option.value === initialValue);
+      setSelectedOption(option);
+    }
+  }, [hasOptions, options, initialValue]);
+
   useEffect(() => {
     const filtered = hasOptions
       ? options.filter((option) =>
