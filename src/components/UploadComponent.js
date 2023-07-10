@@ -15,10 +15,10 @@ function UploadComponent({ onFileChange }) {
   const handleDrop = (event) => {
     event.preventDefault();
     const { files } = event.dataTransfer;
-    console.log(files);
+    if (files.length === 0) return;
     setFile(files[0]);
     setPreview(URL.createObjectURL(files[0]));
-    onFileChange(files[0]); // call the function with the file as an argument
+    // onFileChange(files[0]); // call the function with the file as an argument
   };
 
   const handleFileChange = (event) => {
