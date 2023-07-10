@@ -11,18 +11,19 @@ function Dropdown({
   options,
   initialValue,
   onChange,
+  initialLimit,
 }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredOptions, setFilteredOptions] = useState(options);
   const [selectedOption, setSelectedOption] = useState(initialValue);
   const [offset, setOffset] = useState(0);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(initialLimit);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   useEffect(() => {
     const filtered = options.filter((option) =>
-      option.toLowerCase().includes(searchTerm.toLowerCase())
+      option.label.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredOptions(filtered);
     setOffset(0);
@@ -44,21 +45,22 @@ function Dropdown({
   const handleOptionClick = (option) => {
     setSelectedOption(option);
     setSearchTerm('');
-    onChange(option);
+    onChange(option.value);
     setIsOpen(false);
   };
 
   const handleInputChange = (event) => {
     setSearchTerm(event.target.value);
     setOffset(0);
-    setLimit(10);
+    setLimit(initialLimit);
   };
 
   const handleAddOption = () => {
     const newOption = prompt('Enter a new option:');
     if (newOption) {
-      setFilteredOptions((prevOptions) => [...prevOptions, newOption]);
-      setSelectedOption(newOption);
+      const newOptionObj = { label: newOption, value: newOption };
+      setFilteredOptions((prevOptions) => [...prevOptions, newOptionObj]);
+      setSelectedOption(newOptionObj);
     }
   };
 
@@ -76,8 +78,11 @@ function Dropdown({
           fullWidth
           className="input-field pe-none user-select-none"
           placeholder={placeholder}
+          value={selectedOption?.label}
         />
-        <i class={`fas fa-chevron-${isOpen ? 'up' : 'down'} dropdown-icon`} />
+        <i
+          className={`fas fa-chevron-${isOpen ? 'up' : 'down'} dropdown-icon`}
+        />
       </div>
       {isOpen && (
         <ul>
@@ -100,11 +105,11 @@ function Dropdown({
             )}
             {filteredOptions.slice(offset, limit).map((option) => (
               <li
-                key={option}
+                key={option.value}
                 onClick={() => handleOptionClick(option)}
                 className={selectedOption === option ? 'active' : ''}
               >
-                {option}
+                {option.label}
               </li>
             ))}
             {filteredOptions.length === 0 && <li>No options found</li>}

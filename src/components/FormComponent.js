@@ -21,6 +21,12 @@ function Form(props) {
       </>
     );
   };
+  const log = (value) => console.log(value);
+  const times = Array.from(Array(24).keys()).map((item) => {
+    const hour = item % 12 || 12;
+    const ampm = item < 12 ? 'AM' : 'PM';
+    return { label: `${hour}:00 ${ampm}`, value: item };
+  });
   return (
     <div className="form-container">
       <Box component="form" className="form p-5">
@@ -39,15 +45,21 @@ function Form(props) {
             <CustomInput label="Date" required />
           </div>
           <div className="col-3 input-container">
-            <CustomInput label="From" required />
+            <span className="input-label">
+              From <span className="asterisk">*</span>
+            </span>
+            <Dropdown options={times} initialLimit={24} onChange={log} />
           </div>
           <div className="col-3 pe-0 input-container">
-            <CustomInput label="To" required />
+            <span className="input-label">
+              To <span className="asterisk">*</span>
+            </span>
+            <Dropdown options={times} initialLimit={24} onChange={log} />
           </div>
         </div>
         <div className="col-12 py-3 input-container">
           <span className="input-label">
-            Description <span className="asterisk">*</span>{' '}
+            Description <span className="asterisk">*</span>
           </span>
           <TextField
             className="input-field textarea"
@@ -63,9 +75,10 @@ function Form(props) {
           <Dropdown
             placeholder="Choose Speakers"
             itemLabel="speaker"
-            options={['lol', 'lmao', 'ye']}
+            options={[{ label: 'lol', value: 'lol' }]}
             showSearch
             showAddOption
+            onChange={log}
           />
           <List
             items={[
@@ -79,9 +92,10 @@ function Form(props) {
           <Dropdown
             placeholder="Choose Moderators"
             itemLabel="moderator"
-            options={['lol', 'lmao', 'ye']}
+            options={[{ label: 'lol', value: 'lol' }]}
             showSearch
             showAddOption
+            onChange={log}
           />
           <List
             items={[
@@ -96,23 +110,23 @@ function Form(props) {
           <Dropdown
             placeholder="Choose Venues"
             itemLabel="venue"
-            options={['lol', 'lmao', 'ye']}
+            options={[{ label: 'lol', value: 'lol' }]}
             showSearch
             showAddOption
+            onChange={log}
           />
           <ul>
             {['lol'].map((item) => {
               return (
-                <li>
-                  <div className="main-info p-0 w-100" style={{height: "100px"}}>
-                    <img
-                      src={stadium}
-                      alt="avatar"
-                      className="h-100"
-                    />
+                <li key={item}>
+                  <div
+                    className="main-info p-0 w-100"
+                    style={{ height: '100px' }}
+                  >
+                    <img src={stadium} alt="avatar" className="h-100" />
                     <div className="col-12 ps-3 input-container">
-                    <p className="list-title">Lusail Stadium</p>
-                    <p className="list-subtitle m-0">Venue Capacity: 3.000</p>
+                      <p className="list-title">Lusail Stadium</p>
+                      <p className="list-subtitle m-0">Venue Capacity: 3.000</p>
                     </div>
                   </div>
                 </li>
