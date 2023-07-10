@@ -20,11 +20,13 @@ function UploadComponent({ onFileChange }) {
     setPreview(URL.createObjectURL(files[0]));
     // onFileChange(files[0]); // call the function with the file as an argument
   };
-
+  
   const handleFileChange = (event) => {
-    setFile(event.target.files[0]);
-    setPreview(URL.createObjectURL(event.target.files[0]));
-    onFileChange(event.target.files[0]); // call the function with the file as an argument
+    const { files } = event.target;
+    if (files.length === 0) return;
+    setFile(files[0]);
+    setPreview(URL.createObjectURL( files[0]));
+    // onFileChange(event.target.files[0]); // call the function with the file as an argument
   };
 
   return (
