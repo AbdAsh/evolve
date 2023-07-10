@@ -4,9 +4,13 @@ import './FormComponent.scss';
 import UploadComponent from './UploadComponent';
 import Dropdown from './DropdownComponent';
 import List from './ListComponent';
+import Modal from './ModalComponent';
+import CustomInput from './InputComponent';
 import stadium from '../assets/stadium.png';
 
 function Form(props) {
+  const [openSpeakerModal, setOpenSpeakerModal] = useState(true);
+  const [openModeratorModal, setOpenModeratorModal] = useState(false);
   const [formData, setFormData] = useState({
     sessionTitle: '',
     sessionSubtitle: '',
@@ -28,7 +32,11 @@ function Form(props) {
   };
 
   const handleDropdownChange = (name, value) => {
-    if (formData[name].length && formData[name].some((item) => item.title === value.title)) return;
+    if (
+      formData[name].length &&
+      formData[name].some((item) => item.title === value.title)
+    )
+      return;
     setFormData((prevFormData) => ({
       ...prevFormData,
       [name]: [...prevFormData[name], value],
@@ -40,25 +48,6 @@ function Form(props) {
     console.log(formData);
   };
 
-  const CustomInput = (props) => {
-    const { label, required, name, value, onChange } = props;
-    return (
-      <>
-        <span className="input-label">
-          {label} {required && <span className="asterisk">*</span>}
-        </span>
-        <TextField
-          className="input-field"
-          fullWidth
-          variant="outlined"
-          onChange={(e) => onChange(e)}
-          name={name}
-          value={value}
-          key={name}
-        />
-      </>
-    );
-  };
   const speakers = [
     {
       label: 'John Doe',
@@ -214,6 +203,18 @@ function Form(props) {
         </div>
         <button type="submit">Submit</button>
       </Box>
+      <Modal
+        title="Add Speaker"
+        open={openSpeakerModal}
+        handleClose={() => setOpenSpeakerModal(false)}
+        handleSubmit={(data) => console.log(data)}
+      />
+      <Modal
+        title="Add Moderator"
+        open={openModeratorModal}
+        handleClose={() => setOpenModeratorModal(false)}
+        handleSubmit={(data) => console.log(data)}
+      />
     </div>
   );
 }
