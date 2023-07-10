@@ -10,8 +10,10 @@ function Dropdown({
   itemLabel,
   options,
   initialValue,
-  onChange,
   initialLimit,
+  error,
+  onChange,
+  onAdd
 }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredOptions, setFilteredOptions] = useState(options);
@@ -21,7 +23,6 @@ function Dropdown({
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
   const hasOptions = options && options.length > 0;
-
   useEffect(() => {
     const filtered = hasOptions
       ? options.filter((option) =>
@@ -59,12 +60,7 @@ function Dropdown({
   };
 
   const handleAddOption = () => {
-    const newOption = prompt('Enter a new option:');
-    if (newOption) {
-      const newOptionObj = { label: newOption, value: newOption };
-      setFilteredOptions((prevOptions) => [...prevOptions, newOptionObj]);
-      setSelectedOption(newOptionObj);
-    }
+    onAdd();
   };
 
   const toggleDropdown = () => {
@@ -83,6 +79,8 @@ function Dropdown({
           placeholder={placeholder}
           value={selectedOption?.label}
           key={selectedOption?.value}
+          error={error ? true : false}
+          helperText={!isOpen && error ? error : null}
         />
         <i
           className={`fas fa-chevron-${

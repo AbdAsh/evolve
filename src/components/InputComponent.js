@@ -1,7 +1,7 @@
 import { TextField } from "@mui/material";
 import "./FormComponent.scss";
 function CustomInput(props) {
-  const { label, required, name, value, onChange } = props;
+  const { label, required, name, value, error, onChange } = props;
   return (
     <>
       <span className="input-label">
@@ -15,6 +15,8 @@ function CustomInput(props) {
         name={name}
         value={value}
         key={name}
+        error={error ? true : false}
+        helperText={error}
       />
     </>
   );

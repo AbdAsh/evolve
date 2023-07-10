@@ -14,6 +14,10 @@ const Modal = ({ title, open = true, handleSubmit, handleClose }) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
+  const [errors, setErrors] = useState({
+    firstName: '',
+    lastName: ''
+  });
 
   const handleFirstNameChange = (event) => {
     setFirstName(event.target.value);
@@ -27,13 +31,34 @@ const Modal = ({ title, open = true, handleSubmit, handleClose }) => {
     setEmail(event.target.value);
   };
 
+  const validate = () => {
+    const newErrors = {};
+    newErrors.firstName = firstName ? '' : 'This field is required';
+    newErrors.lastName = lastName ? '' : 'This field is required';
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+  
   const handleAdd = (event) => {
+    event.preventDefault();
+    if (!validate()) return;
     handleSubmit({ firstName, lastName, email });
     handleClose();
   };
 
+  const close = () => {
+    setFirstName('');
+    setLastName('');
+    setEmail('');
+    setErrors({
+      firstName: '',
+      lastName: ''
+    });
+    handleClose();
+  };
+
   return (
-    <Dialog className="ModalComponent" open={open} onClose={handleClose}>
+    <Dialog className="ModalComponent" open={open} onClose={close}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <div className="col-12 input-container text-center pb-4">
@@ -46,6 +71,7 @@ const Modal = ({ title, open = true, handleSubmit, handleClose }) => {
             value={firstName}
             onChange={handleFirstNameChange}
             required
+            error={errors.firstName}
           />
         </div>
         <div className="col-12 input-container">
@@ -54,6 +80,7 @@ const Modal = ({ title, open = true, handleSubmit, handleClose }) => {
             value={lastName}
             onChange={handleLastNameChange}
             required
+            error={errors.lastName}
           />
         </div>
         <div className="col-12 input-container">
@@ -65,7 +92,7 @@ const Modal = ({ title, open = true, handleSubmit, handleClose }) => {
         </div>
       </DialogContent>
       <DialogActions className="p-5 justify-content-around ">
-        <Button className='button black' onClick={handleClose}>
+        <Button className='button black' onClick={close}>
           Cancel
         </Button>
         <Button className="button white" onClick={handleAdd}>
