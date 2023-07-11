@@ -9,7 +9,10 @@ import {
 import './ModalComponent.scss';
 import './ModalComponent.scss';
 import {UploadComponent, CustomInput} from './index';
+
+// Define a functional component called Modal that takes in props
 const Modal = ({ title, open = true, handleSubmit, handleClose }) => {
+  // Define state variables for first name, last name, email, and errors
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -19,6 +22,7 @@ const Modal = ({ title, open = true, handleSubmit, handleClose }) => {
     email: ''
   });
 
+  // Define event handlers for when the first name, last name, and email inputs change
   const handleFirstNameChange = (event) => {
     setFirstName(event.target.value);
   };
@@ -31,6 +35,7 @@ const Modal = ({ title, open = true, handleSubmit, handleClose }) => {
     setEmail(event.target.value);
   };
 
+  // Define a function to validate the inputs and set the errors state variable
   const validate = () => {
     const newErrors = {};
     newErrors.firstName = firstName ? '' : 'This field is required';
@@ -43,6 +48,7 @@ const Modal = ({ title, open = true, handleSubmit, handleClose }) => {
     return Object.values(newErrors).every((item) => item === '');
   };
   
+  // Define an event handler for when the "Add" button is clicked
   const handleAdd = (event) => {
     event.preventDefault();
     if (!validate()) return;
@@ -50,6 +56,7 @@ const Modal = ({ title, open = true, handleSubmit, handleClose }) => {
     close();
   };
 
+  // Define a function to reset the state variables and close the modal
   const close = () => {
     setFirstName('');
     setLastName('');
@@ -62,6 +69,7 @@ const Modal = ({ title, open = true, handleSubmit, handleClose }) => {
     handleClose();
   };
 
+  // Render the modal component with the appropriate inputs and buttons
   return (
     <Dialog className="ModalComponent" open={open} onClose={close}>
       <DialogTitle>{title}</DialogTitle>
@@ -110,4 +118,5 @@ const Modal = ({ title, open = true, handleSubmit, handleClose }) => {
   );
 };
 
+// Export the Modal component as the default export of this module
 export default Modal;

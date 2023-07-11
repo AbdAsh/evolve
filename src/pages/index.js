@@ -3,9 +3,11 @@ import Form from '../components/FormComponent.js';
 import { useLocation } from "react-router-dom";
 
 function IndexPage() {
+  // Get the search query parameters from the current URL
   const search = useLocation().search;
+  // Extract the value of the 'sessionId' parameter from the query string
   const id = new URLSearchParams(search).get("sessionId");
-  // ids: 135, 136
+  // Render the following JSX code
   return (
     <div className="App">
       <div className="row p-3 justify-content-between page-header">
@@ -19,6 +21,7 @@ function IndexPage() {
           </div>
         </div>
       </div>
+      {/* Render the Form component and pass the session ID as a prop */}
       <Form session={id} />
     </div>
   );

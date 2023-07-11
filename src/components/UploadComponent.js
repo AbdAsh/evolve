@@ -4,31 +4,38 @@ import uploadIcon from '../assets/Upload.svg';
 import './UploadComponent.scss';
 
 function UploadComponent({ onFileChange }) {
+  // Declare state variables for file and preview
   const [, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
 
+  // Handle drag over event
   const handleDragOver = (event) => {
     console.log('dragging', event);
     event.preventDefault();
   };
 
+  // Handle drop event
   const handleDrop = (event) => {
     event.preventDefault();
     const { files } = event.dataTransfer;
     if (files.length === 0) return;
     setFile(files[0]);
     setPreview(URL.createObjectURL(files[0]));
-    // onFileChange(files[0]); // call the function with the file as an argument
+    if (onFileChange)
+     onFileChange(files[0]); // call the function with the file as an argument
   };
   
+  // Handle file change event
   const handleFileChange = (event) => {
     const { files } = event.target;
     if (files.length === 0) return;
     setFile(files[0]);
     setPreview(URL.createObjectURL( files[0]));
-    // onFileChange(event.target.files[0]); // call the function with the file as an argument
+    if (onFileChange)
+      onFileChange(event.target.files[0]); // call the function with the file as an argument
   };
 
+  // Render the component
   return (
     <Box className="thumbnail-container">
       {preview ? (

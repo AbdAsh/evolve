@@ -4,12 +4,15 @@ import './FormComponent.scss';
 import { CustomInput, UploadComponent, Modal, List, Dropdown } from './index';
 import stadium from '../assets/stadium.png';
 import axios from 'axios';
-// set axios default headers
+// Set axios default headers
 axios.defaults.baseURL =
   'https://qa-testing-backend-293b1363694d.herokuapp.com/api/v3';
 axios.defaults.headers.common['Authorization'] =
   'Bearer eyJhbGciOiJSUzI1NiJ9.eyJpZCI6MjEyLCJ0eXBlIjoidXNlciIsInJhbiI6IkFQWEVFT0hMWEhSWk1ISlRUWFNZIiwic3RhdHVzIjoxfQ.ZgAWMwcCTYvVTARUT8wjxGCpLn5vRsDEt-zpzIPhsRN4np-sqWZ6YpCOPZsD40MWPjCfAepXdLIRW6JLiJYla8AHTogRMY-UIyqq8KvxhO8euOGVLLm6-jbhws7h4uznwQrc8mb8IywKm0Qagm2i5NdM9bRotWWW3viNXVxAOXfpx5ciRCSLlCAEisC47s5n7GM2ytT2BIeLEnSK1p9XvrF7-1Z-F8yjsKTG29wjejjZcanvY2_j53nR62glm-ZvIhP6jXPLlEaE1jttfOYC3BaJSHbdYdEXzSLzsAaB2HI1ZmtFdat7d 0cKsSvCgu6Z73uzvC6oOtbhywQQfu2lOw';
+
 function Form({ session }) {
+  // State variables
+  const [formKey, setFormKey] = useState(0);
   const [openSpeakerModal, setOpenSpeakerModal] = useState(false);
   const [openModeratorModal, setOpenModeratorModal] = useState(false);
   const [speakerOptions, setSpeakerOptions] = useState([]);
@@ -37,6 +40,7 @@ function Form({ session }) {
   const [toUpdate, setToUpdate] = useState(null);
   const [lastOffset, setLastOffset] = useState(false);
 
+  // Effect to fetch session details
   useEffect(() => {
     if (!session) return;
     axios
@@ -51,6 +55,7 @@ function Form({ session }) {
       .catch((err) => console.log(err));
   }, [session]);
 
+  // Effect to fetch users
   useEffect(() => {
     if (lastOffset) return;
     setLoading(true);
@@ -76,6 +81,7 @@ function Form({ session }) {
       .finally(() => setLoading(false));
   }, [offset, limit, toUpdate, lastOffset]);
 
+  // Function to handle input change
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData((prevFormData) => ({
@@ -84,7 +90,10 @@ function Form({ session }) {
     }));
   };
 
+  // Function to handle dropdown change
   const handleDropdownChange = (name, value) => {
+    // NOTE: this is not the best way to handle dropdown change, but it's just for demo purposes :)
+    // TODO: Should handle dropdown single select type
     if (name === 'from' || name === 'to') {
       setFormData((prevFormData) => ({
         ...prevFormData,
@@ -93,6 +102,8 @@ function Form({ session }) {
       return;
     }
 
+    // NOTE: this is not the best way to handle dropdown change, but it's just for demo purposes :)
+    // TODO: Should handle dropdown multi select type
     if (formData[name].length && formData[name].some((item) => item === value))
       return;
     setFormData((prevFormData) => ({
@@ -101,6 +112,7 @@ function Form({ session }) {
     }));
   };
 
+  // Function to handle search
   const handleSearch = (value, type) => {
     setLoading(true);
     // if no value is passed, reset the options
@@ -108,6 +120,7 @@ function Form({ session }) {
       setLoading(false);
       return setToUpdate(type ?? null);
     }
+    
     axios
       .get(`/search-users?event_id=8&search=${value}`)
       .then((res) => {
@@ -123,17 +136,20 @@ function Form({ session }) {
       .finally(() => setLoading(false));
   };
 
+  // Function to handle infinite scrolling
   const increaseOffset = (type) => {
     setToUpdate(type ?? null);
     setOffset((prevOffset) => prevOffset + 1);
   };
 
+  // Function to generate times in 12 hour format
   const times = Array.from(Array(24).keys()).map((item) => {
     const hour = item % 12 || 12;
     const ampm = item < 12 ? 'AM' : 'PM';
     return { label: `${hour}:00 ${ampm}`, value: `${item}:00` };
   });
 
+  // Function to find users by id from the options and return them in the same order
   const findUsersById = (users, ids) =>
     ids.reduce((acc, id) => {
       const user = users.find((user) => user.id === id);
@@ -141,6 +157,7 @@ function Form({ session }) {
       return acc;
     }, []);
 
+    // Function to delete speaker from the list
   const deleteSpeaker = (speaker) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -148,6 +165,7 @@ function Form({ session }) {
     }));
   };
 
+  // Function to delete moderator from the list
   const deleteModerator = (moderator) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -157,6 +175,7 @@ function Form({ session }) {
     }));
   };
 
+  // Function to submit the modal and add the user
   const submitModal = (user) => {
     const { firstName, lastName, email } = user;
     axios
@@ -173,6 +192,7 @@ function Form({ session }) {
       .catch((err) => console.log(err));
   };
 
+  // Function to validate the form
   const validate = () => {
     const required = Object.keys(errors);
     const newErrors = {};
@@ -189,6 +209,7 @@ function Form({ session }) {
     return Object.values(newErrors).every((item) => item === '');
   };
 
+  // Function to submit the form
   const handleSubmit = (event) => {
     event.preventDefault();
     if (!validate()) return;
@@ -209,7 +230,7 @@ function Form({ session }) {
       .catch((err) => console.log(err));
   };
 
-  const [formKey, setFormKey] = useState(0);
+  // Function to reset the form
   const handleReset = (event) => {
     event.preventDefault();
     // NOTE: this is not the best way to reset the form, but it's just for demo purposes :)
@@ -234,6 +255,7 @@ function Form({ session }) {
     });
   };
 
+  // Render the component
   return (
     <div className="form-container">
       <Box
