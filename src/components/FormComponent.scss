@@ -10,6 +10,12 @@ $custom-grey: #bababa;
     justify-content: center;
     width: 100%;
     flex-grow: 1;
+    .buttons-container {
+      display: flex;
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
   }
 }
 .multi-inputs-container{

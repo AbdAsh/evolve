@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { TextField, Box } from '@mui/material';
+import { TextField, Box, Button } from '@mui/material';
 import './FormComponent.scss';
 import { CustomInput, UploadComponent, Modal, List, Dropdown } from './index';
 import stadium from '../assets/stadium.png';
@@ -9,14 +9,14 @@ axios.defaults.baseURL =
   'https://qa-testing-backend-293b1363694d.herokuapp.com/api/v3';
 axios.defaults.headers.common['Authorization'] =
   'Bearer eyJhbGciOiJSUzI1NiJ9.eyJpZCI6MjEyLCJ0eXBlIjoidXNlciIsInJhbiI6IkFQWEVFT0hMWEhSWk1ISlRUWFNZIiwic3RhdHVzIjoxfQ.ZgAWMwcCTYvVTARUT8wjxGCpLn5vRsDEt-zpzIPhsRN4np-sqWZ6YpCOPZsD40MWPjCfAepXdLIRW6JLiJYla8AHTogRMY-UIyqq8KvxhO8euOGVLLm6-jbhws7h4uznwQrc8mb8IywKm0Qagm2i5NdM9bRotWWW3viNXVxAOXfpx5ciRCSLlCAEisC47s5n7GM2ytT2BIeLEnSK1p9XvrF7-1Z-F8yjsKTG29wjejjZcanvY2_j53nR62glm-ZvIhP6jXPLlEaE1jttfOYC3BaJSHbdYdEXzSLzsAaB2HI1ZmtFdat7d 0cKsSvCgu6Z73uzvC6oOtbhywQQfu2lOw';
-function Form(props) {
+function Form({ session }) {
   const [openSpeakerModal, setOpenSpeakerModal] = useState(false);
   const [openModeratorModal, setOpenModeratorModal] = useState(false);
   const [speakerOptions, setSpeakerOptions] = useState([]);
   const [moderatorOptions, setModeratorOptions] = useState([]);
   const [formData, setFormData] = useState({
-    sessionTitle: '',
-    sessionSubtitle: '',
+    title: '',
+    subtitle: '',
     date: '',
     from: '',
     to: '',
@@ -26,7 +26,7 @@ function Form(props) {
     venue: '',
   });
   const [errors, setErrors] = useState({
-    sessionTitle: '',
+    title: '',
     date: '',
     from: '',
     description: '',
@@ -36,6 +36,20 @@ function Form(props) {
   const [limit] = useState(10);
   const [toUpdate, setToUpdate] = useState(null);
   const [lastOffset, setLastOffset] = useState(false);
+
+  useEffect(() => {
+    if (!session) return;
+    axios
+      .get(`/session-details/${session}?event_id=8`)
+      .then((res) => {
+        setFormData({
+          ...res.data,
+          speakers: res.data.speakers.map((item) => item.id),
+          moderators: res.data.moderators.map((item) => item.id),
+        });
+      })
+      .catch((err) => console.log(err));
+  }, [session]);
 
   useEffect(() => {
     if (lastOffset) return;
@@ -62,31 +76,6 @@ function Form(props) {
       .finally(() => setLoading(false));
   }, [offset, limit, toUpdate, lastOffset]);
 
-  // useEffect(() => {
-  // const session = {
-  //   sessionTitle: 'Session Title',
-  //   sessionSubtitle: 'Session Subtitle',
-  //   date: '2021-10-10',
-  //   from: '12:00',
-  //   to: '13:00',
-  //   description: 'Session Description',
-  //   speakers: [
-  //     { avatar: null, title: 'John Doe', subtitle: 'CEO' },
-  //     { avatar: null, title: 'Jane Doe', subtitle: 'CEO' },
-  //   ],
-  //   moderators: [
-  //     { avatar: null, title: 'John Doe', subtitle: 'CEO' },
-  //     { avatar: null, title: 'Jane Doe', subtitle: 'CEO' },
-  //   ],
-  //   venue: {
-  //     avatar: null,
-  //     title: 'Lusail Stadium',
-  //     subtitle: 'Venue Capacity: 3.000',
-  //   },
-  // };
-  // setFormData(session);
-  // }, []);
-
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData((prevFormData) => ({
@@ -96,28 +85,20 @@ function Form(props) {
   };
 
   const handleDropdownChange = (name, value) => {
+    if (name === 'from' || name === 'to') {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value,
+      }));
+      return;
+    }
+
     if (formData[name].length && formData[name].some((item) => item === value))
       return;
     setFormData((prevFormData) => ({
       ...prevFormData,
       [name]: [...prevFormData[name], value],
     }));
-  };
-
-  const validate = () => {
-    const required = ['sessionTitle', 'date', 'from', 'description'];
-    const newErrors = {};
-    required.forEach((item) => {
-      newErrors[item] = !formData[item] ? 'This field is required' : '';
-    });
-    setErrors(newErrors);
-    return Object.values(newErrors).every((item) => item === '');
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    if (!validate()) return;
-    console.log(formData);
   };
 
   const handleSearch = (value, type) => {
@@ -192,24 +173,99 @@ function Form(props) {
       .catch((err) => console.log(err));
   };
 
+  const validate = () => {
+    const required = Object.keys(errors);
+    const newErrors = {};
+    // NOTE: this is not the best way to validate, but it's just for demo purposes :)
+    // TODO: Should also validate the other fields
+    required.forEach((item) => {
+      newErrors[item] = !formData[item] ? 'This field is required' : '';
+
+      if (item === 'date' && !/^\d{2}-\d{2}-\d{4}$/.test(formData.date))
+        newErrors[item] =
+          newErrors[item] ?? 'Date must be in the format DD-MM-YYYY';
+    });
+    setErrors(newErrors);
+    return Object.values(newErrors).every((item) => item === '');
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (!validate()) return;
+
+    axios
+      .post('/create-sessions', {
+        event_id: 8,
+        title: formData.title,
+        subtitle: formData.subtitle,
+        date: formData.date,
+        from: formData.from,
+        to: formData.to,
+        description: formData.description,
+        speaker_ids: formData.speakers,
+        moderator_ids: formData.moderators,
+      })
+      .then((res) => console.log(res.data))
+      .catch((err) => console.log(err));
+  };
+
+  const [formKey, setFormKey] = useState(0);
+  const handleReset = (event) => {
+    event.preventDefault();
+    // NOTE: this is not the best way to reset the form, but it's just for demo purposes :)
+    // TODO: Should remove sessionId from the url
+    setFormKey((prevKey) => prevKey + 1);
+    setFormData({
+      title: '',
+      subtitle: '',
+      date: '',
+      from: '',
+      to: '',
+      description: '',
+      speakers: [],
+      moderators: [],
+      venue: '',
+    });
+    setErrors({
+      title: '',
+      date: '',
+      from: '',
+      description: '',
+    });
+  };
+
   return (
     <div className="form-container">
-      <Box component="form" className="form p-5" onSubmit={handleSubmit}>
+      <Box
+        key={formKey}
+        component="form"
+        className="form p-5"
+        onSubmit={handleSubmit}
+        onReset={handleReset}
+      >
+        <div className="col-4 p-4 buttons-container">
+          <Button className="w-100 button black" type="reset">
+            Cancel
+          </Button>
+          <Button className="w-100 button white" type="submit">
+            Next
+          </Button>
+        </div>
         <div className="col-12 py-3 input-container">
           <CustomInput
             label="Session Title"
             required
-            name="sessionTitle"
-            value={formData.sessionTitle}
+            name="title"
+            value={formData.title}
             onChange={handleInputChange}
-            error={errors.sessionTitle}
+            error={errors.title}
           />
         </div>
         <div className="col-12 py-3 input-container">
           <CustomInput
             label="Session Subtitle"
-            name="sessionSubtitle"
-            value={formData.sessionSubtitle}
+            name="subtitle"
+            value={formData.subtitle}
             onChange={handleInputChange}
           />
         </div>
@@ -233,8 +289,8 @@ function Form(props) {
               From <span className="asterisk">*</span>
             </span>
             <Dropdown
+              showValue
               options={times}
-              initialValue={formData.from}
               onChange={(value) => handleDropdownChange('from', value)}
               error={errors.from}
             />
@@ -242,8 +298,8 @@ function Form(props) {
           <div className="col-3 pe-0 input-container">
             <span className="input-label">To</span>
             <Dropdown
+              showValue
               options={times}
-              value={formData.to}
               onChange={(value) => handleDropdownChange('to', value)}
               initialValue={formData.to}
             />
@@ -308,6 +364,7 @@ function Form(props) {
           />
         </div>
         <div className="col-12 line" />
+        {/* NOTE: The Venue is neglected for time purposes */}
         <div className="col-12 py-3 input-container overflow-hidden">
           <span className="input-label"> Venue </span>
           <Dropdown
@@ -337,7 +394,6 @@ function Form(props) {
             })}
           </ul>
         </div>
-        <button type="submit">Submit</button>
       </Box>
       <Modal
         title="Add Speaker"
