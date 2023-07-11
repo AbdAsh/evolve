@@ -7,6 +7,8 @@ import axios from 'axios';
 // Set axios default headers
 axios.defaults.baseURL =
   'https://qa-testing-backend-293b1363694d.herokuapp.com/api/v3';
+  // NOTE: this is not the best way to set the token, but it's just for demo purposes :)
+  // TODO: Should use a better way to set the token using environment variables or something else
 axios.defaults.headers.common['Authorization'] =
   'Bearer eyJhbGciOiJSUzI1NiJ9.eyJpZCI6MjEyLCJ0eXBlIjoidXNlciIsInJhbiI6IkFQWEVFT0hMWEhSWk1ISlRUWFNZIiwic3RhdHVzIjoxfQ.ZgAWMwcCTYvVTARUT8wjxGCpLn5vRsDEt-zpzIPhsRN4np-sqWZ6YpCOPZsD40MWPjCfAepXdLIRW6JLiJYla8AHTogRMY-UIyqq8KvxhO8euOGVLLm6-jbhws7h4uznwQrc8mb8IywKm0Qagm2i5NdM9bRotWWW3viNXVxAOXfpx5ciRCSLlCAEisC47s5n7GM2ytT2BIeLEnSK1p9XvrF7-1Z-F8yjsKTG29wjejjZcanvY2_j53nR62glm-ZvIhP6jXPLlEaE1jttfOYC3BaJSHbdYdEXzSLzsAaB2HI1ZmtFdat7d 0cKsSvCgu6Z73uzvC6oOtbhywQQfu2lOw';
 
