@@ -1,9 +1,11 @@
 import './index.scss';
 import Form from '../components/FormComponent.js';
-import { Button } from '@mui/material';
+import { useLocation } from "react-router-dom";
 
 function IndexPage() {
-  // get route query params
+  const search = useLocation().search;
+  const id = new URLSearchParams(search).get("sessionId");
+  // ids: 135, 136
   return (
     <div className="App">
       <div className="row p-3 justify-content-between page-header">
@@ -16,16 +18,8 @@ function IndexPage() {
             <h6 className="ps-3 text-white">New Sessions</h6>
           </div>
         </div>
-        <div className="col-4 d-flex align-items-center">
-          <Button className="w-100 button black" type="reset">
-            Reset
-          </Button>
-          <Button className="w-100 button white ms-3" type="submit">
-            Save
-          </Button>
-        </div>
       </div>
-      <Form />
+      <Form session={id} />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  position: relative;
 }
 
 .back-nav {
@@ -9,6 +10,7 @@
 .button {
   width: 35%;
   aspect-ratio: 4/1;
+  border: 1px solid #404040;
   &.white {
     border-radius: 0px;
     background-color: #fff;
