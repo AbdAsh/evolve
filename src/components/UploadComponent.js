@@ -4,7 +4,7 @@ import uploadIcon from '../assets/Upload.svg';
 import './UploadComponent.scss';
 
 function UploadComponent({ onFileChange }) {
-  const [file, setFile] = useState(null);
+  const [, setFile] = useState(null);
   const [preview, setPreview] = useState(null);
 
   const handleDragOver = (event) => {

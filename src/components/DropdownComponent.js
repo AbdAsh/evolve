@@ -6,6 +6,7 @@ import { TextField } from '@mui/material';
 function Dropdown({
   showSearch,
   showAddOption,
+  showValue,
   placeholder,
   itemLabel,
   options,
@@ -31,7 +32,7 @@ function Dropdown({
   }, [hasOptions, options, initialValue]);
 
   useEffect(() => {
-    if (isOpen && hasOptions){
+    if (isOpen && hasOptions && onScrollEnd){
       const dropdown =  dropdownRef.current;
       const handleScroll = () => {
         if (dropdown.scrollTop + dropdown.clientHeight + 10 >= dropdown.scrollHeight) {
@@ -73,6 +74,7 @@ function Dropdown({
           className="input-field pe-none user-select-none"
           placeholder={placeholder}
           key={selectedOption?.value}
+          value={showValue && selectedOption ? selectedOption.label : ''}
           error={error ? true : false}
           helperText={!isOpen && error ? error : null}
         />
