@@ -1,16 +1,27 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './pages/App';
+import App from './pages';
 import reportWebVitals from './reportWebVitals';
 import '@fontsource/roboto';
 import DefaultLayout from './layouts/default';
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <DefaultLayout body={<App />} />,
+  }
+]);
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <DefaultLayout body={<App />} />
+      <RouterProvider router={router} />
   </React.StrictMode>
 );
 
