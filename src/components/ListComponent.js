@@ -23,7 +23,7 @@ function List({ items, onDelete }) {
                   className="profile-image"
                 />
                 {/* Rendering the item's first and last name */}
-                <span className="list-title">{item.first_name} {item.last_name}</span>
+                <span className="list-title">{`${item.first_name} ${item.last_name}`}</span>
                 {/* Rendering the item's subtitle or a default subtitle */}
                 <span className="list-subtitle">{item.subtitle ?? "No offical title"}</span>
               </div>

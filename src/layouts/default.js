@@ -5,7 +5,7 @@ function DefaultLayout(props) {
       <header className='header'>
       </header>
       <section className="body-container">
-        <div className="sidebar">
+        <div className="sidebar" data-testid="sidebar">
         </div>
         <main className="main-body">
           {props.body}
