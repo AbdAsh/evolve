@@ -177,38 +177,41 @@ function Form(props) {
   };
 
   const submitModal = (user) => {
-    const {firstName, lastName, email} = user;
-    axios.post('/create-users',{
-      event_id: 8,
-      first_name: firstName,
-      last_name: lastName,
-      email: email,
-    }).then((res) => {
-      setToUpdate(null);
-      setOffset(0);
-    }).catch((err) => console.log(err));
-  }
+    const { firstName, lastName, email } = user;
+    axios
+      .post('/create-users', {
+        event_id: 8,
+        first_name: firstName,
+        last_name: lastName,
+        email: email,
+      })
+      .then((res) => {
+        setToUpdate(null);
+        setOffset(0);
+      })
+      .catch((err) => console.log(err));
+  };
 
   return (
     <div className="form-container">
       <Box component="form" className="form p-5" onSubmit={handleSubmit}>
         <div className="col-12 py-3 input-container">
-          {CustomInput({
-            label: 'Session Title',
-            required: true,
-            name: 'sessionTitle',
-            value: formData.sessionTitle,
-            onChange: handleInputChange,
-            error: errors.sessionTitle,
-          })}
+          <CustomInput
+            label="Session Title"
+            required
+            name="sessionTitle"
+            value={formData.sessionTitle}
+            onChange={handleInputChange}
+            error={errors.sessionTitle}
+          />
         </div>
         <div className="col-12 py-3 input-container">
-          {CustomInput({
-            label: 'Session Subtitle',
-            name: 'sessionSubtitle',
-            value: formData.sessionSubtitle,
-            onChange: handleInputChange,
-          })}
+          <CustomInput
+            label="Session Subtitle"
+            name="sessionSubtitle"
+            value={formData.sessionSubtitle}
+            onChange={handleInputChange}
+          />
         </div>
         <div className="col-12 py-3 input-container">
           <span className="input-label">Thumbnail</span>
@@ -216,14 +219,14 @@ function Form(props) {
         </div>
         <div className="row col-12  py-3">
           <div className="col-6 ps-0 input-container">
-            {CustomInput({
-              label: 'Date',
-              required: true,
-              name: 'date',
-              value: formData.date,
-              onChange: handleInputChange,
-              error: errors.date,
-            })}
+            <CustomInput
+              label="Date"
+              required
+              name="date"
+              value={formData.date}
+              onChange={handleInputChange}
+              error={errors.date}
+            />
           </div>
           <div className="col-3 input-container">
             <span className="input-label">
